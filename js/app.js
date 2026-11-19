@@ -10,6 +10,8 @@ import { renderDashboard, FAULTS } from './screens/dashboard.js';
 import { renderService, renderMonMenu, renderSelector, renderStub, SERVICE_ITEMS, MON_ITEMS } from './screens/menus.js';
 import { renderMonitor, renderRecords, renderPlayback } from './screens/monitor.js';
 import { renderAcDrive } from './screens/acdrive.js';
+import { SCREENS } from './settings/registry.js';
+import { initialMaint } from './settings/data-maint.js';
 
 const TABS = [engineTab, hydraulicTab, acDriveTab];
 const STORE_KEY = 'eh4000-records-v1';
@@ -69,12 +71,48 @@ let state = {
   recSel: 0,
   play: { recIdx: 0, pageIdx: 0, pos: 0, isHold: false },
   stubTitle: '',
+  stack: [],
+  maint: initialMaint(),
+  blink: true,
 };
 
 const setState = (patch) => {
   state = { ...state, ...patch };
   render();
 };
+
+// ---------- стек экранов настроек ----------
+const ctx = {
+  maint: () => state.maint,
+  setMaint: (maint) => { state = { ...state, maint }; },
+  isDigital: () => state.isDigital,
+  setDigital: (isDigital) => { state = { ...state, isDigital }; },
+  clearRecords: () => {
+    const records = [SAMPLE_RECORD];
+    saveRecords(records);
+    state = { ...state, records, recSel: 0 };
+  },
+};
+
+const pushScreen = (id, base = {}) => {
+  const frame = { id, st: SCREENS[id].init(ctx) };
+  return { ...base, screen: 'mod', stack: [...(base.stack ?? state.stack), frame] };
+};
+
+const handleMod = (key) => {
+  const top = state.stack[state.stack.length - 1];
+  const action = SCREENS[top.id].on(key, top.st, ctx) ?? {};
+  let stack = state.stack;
+  if (action.st) stack = [...stack.slice(0, -1), { ...top, st: action.st }];
+  if (action.pop) {
+    stack = stack.slice(0, -1);
+    return stack.length ? { stack } : { stack, screen: state.returnTo ?? 'service' };
+  }
+  if (action.push) return pushScreen(action.push, { stack });
+  return { stack };
+};
+
+const openMod = (id, returnTo) => pushScreen(id, { stack: [], returnTo });
 
 const currentItem = () => TABS[state.tab].items[state.itemSel];
 const pageKey = () => `${state.tab}:${state.itemSel}:${state.pageIdx}`;
@@ -101,9 +139,10 @@ const HANDLERS = {
   },
   main: {
     o: () => ({ screen: 'service', serviceSel: 0 }),
-    left: () => ({ faultIdx: wrap(state.faultIdx - 1, FAULTS.length) }),
+    left: () => openMod('faults', 'main'),
     right: () => ({ faultIdx: wrap(state.faultIdx + 1, FAULTS.length) }),
     help: () => ({ isDigital: !state.isDigital }),
+    star: () => ({ dim: (state.dim + 1) % 3 }),
   },
   service: {
     up: () => ({ serviceSel: wrap(state.serviceSel - 1, SERVICE_ITEMS.length) }),
@@ -112,7 +151,8 @@ const HANDLERS = {
     o: () => {
       if (state.serviceSel === 0) return { screen: 'acdrive' };
       if (state.serviceSel === 1) return { screen: 'monMenu', monSel: 0 };
-      return { screen: 'stub', stubTitle: SERVICE_ITEMS[state.serviceSel] };
+      const id = ['', '', 'maintLog', 'machineData', 'settings'][state.serviceSel];
+      return id ? openMod(id, 'service') : { screen: 'stub', stubTitle: SERVICE_ITEMS[state.serviceSel] };
     },
   },
   acdrive: { x: () => ({ screen: 'service' }) },
@@ -168,8 +208,8 @@ const playPages = () => TABS[playRecord().tabIdx].items[playRecord().itemIdx].pa
 
 /** Нажатие кнопки панели. */
 const press = (key) => {
-  if (key === 'star') {
-    setState({ dim: (state.dim + 1) % 3 });
+  if (state.screen === 'mod') {
+    setState(handleMod(key));
     return;
   }
   const fn = HANDLERS[state.screen]?.[key];
@@ -182,7 +222,11 @@ const screenEl = document.getElementById('screen');
 const renderScreen = () => {
   switch (state.screen) {
     case 'boot': return renderBoot({ step: state.bootStep });
-    case 'main': return renderDashboard({ faultIdx: state.faultIdx, isDigital: state.isDigital, hasCaution: true });
+    case 'main': return renderDashboard({ faultIdx: state.faultIdx, isDigital: state.isDigital, blink: state.blink });
+    case 'mod': {
+      const top = state.stack[state.stack.length - 1];
+      return SCREENS[top.id].render(top.st, ctx);
+    }
     case 'service': return renderService({ sel: state.serviceSel });
     case 'acdrive': return renderAcDrive();
     case 'stub': return renderStub({ title: state.stubTitle });
@@ -266,8 +310,13 @@ setInterval(() => {
   setState({ play: { ...state.play, pos, isHold: pos >= playLen() } });
 }, PLAY_TICK_MS);
 
-// часы на экране
-setInterval(() => { if (state.screen !== 'playback') render(); }, 15000);
+// мигание поворотников, живые значения и часы
+const LIVE_TICK_MS = 500;
+setInterval(() => {
+  if (state.screen === 'main') setState({ blink: !state.blink });
+  else if (state.screen === 'mod') render();
+}, LIVE_TICK_MS);
+setInterval(() => { if (state.screen !== 'playback' && state.screen !== 'main') render(); }, 15000);
 
 fit();
 render();

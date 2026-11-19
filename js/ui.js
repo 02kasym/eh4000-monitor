@@ -23,12 +23,16 @@ const ICONS = {
   x: '<svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke-width="3.5" fill="none"/></svg>',
   o: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-width="3" fill="none"/></svg>',
   q: '<svg viewBox="0 0 24 24"><text x="12" y="19" text-anchor="middle" font-size="20" font-weight="700" stroke="none">?</text></svg>',
+  star: '<svg viewBox="0 0 24 24"><path d="M12 3v18M4 7.5l16 9M20 7.5l-16 9" stroke-width="3.2" stroke-linecap="round" fill="none"/></svg>',
 };
 
 const keyIcon = (k) => {
   if (k === 'ud') return `<span class="hk-pair"><span class="hk">${ICONS.up}</span><span class="hk">${ICONS.down}</span></span>`;
   if (k === 'lr') return `<span class="hk-pair"><span class="hk">${ICONS.left}</span><span class="hk">${ICONS.right}</span></span>`;
-  const bare = k === 'x' || k === 'o' || k === 'q';
+  if (k === 'udlr') {
+    return `<span class="hk-pair">${['up', 'down', 'left', 'right'].map((d) => `<span class="hk">${ICONS[d]}</span>`).join('')}</span>`;
+  }
+  const bare = k === 'x' || k === 'o' || k === 'q' || k === 'star';
   return `<span class="hk${bare ? ' hk--bare' : ''}">${ICONS[k]}</span>`;
 };
 

@@ -1,0 +1,145 @@
+/* ===== Главный экран (новый дизайн) ===== */
+.screen[data-screen="main"] { background: #1b2aa0; }
+.screen[data-screen="main"] .dash-model,
+.screen[data-screen="main"] .dash-hours { font: 700 22px var(--font-screen); top: 10px; z-index: 1; }
+.screen[data-screen="main"] .dash-fault {
+  left: 120px; right: 16px; top: 518px; height: 26px; border: 0;
+  background: #000; padding: 0 10px; font-size: 17px;
+}
+.screen[data-screen="main"] .dash-fault b { padding-right: 18px; border-right: 2px solid #1b2aa0; }
+.screen[data-screen="main"] .dash-bottom { bottom: 8px; gap: 40px; }
+.screen[data-screen="main"] .dash-clock {
+  font: 700 28px/1.1 var(--font-screen); background: #000; border: 3px solid #e8e8e8; border-radius: 0 16px 16px 0;
+}
+.dash-alarm { font-size: 17px; }
+.dash-menu { position: static; margin-left: 60px; font-size: 17px; }
+.screen[data-screen="main"] .dash-temp {
+  display: flex; align-items: center; gap: 8px; background: #000; border: 2px solid #e8e8e8; border-radius: 3px;
+  font: 700 20px var(--font-screen);
+}
+
+/* ===== Общие элементы настроек ===== */
+.plus-badge { position: absolute; right: 22px; top: 34px; font-size: 22px; letter-spacing: 2px; }
+.toast {
+  position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%);
+  padding: 6px 16px; background: #000; border: 1px solid #e8e8e8; color: var(--warn); white-space: nowrap;
+}
+.dialog {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+  padding: 18px 26px; background: #000; border: 2px solid #f2f2f2; line-height: 1.5; min-width: 340px;
+  text-align: center; z-index: 5;
+}
+.popup {
+  position: absolute; min-width: 300px; background: #b9c6e4; border: 2px solid #fff; z-index: 5;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5); color: #111;
+}
+.popup__title { background: #233a9a; color: #fff; padding: 4px 12px; }
+.popup__opt { padding: 5px 14px; border-top: 1px solid #8ea0c8; }
+.popup__opt--sel { background: var(--sel-bg); }
+.pager--box { top: 40px; padding: 0 8px; background: #fff; color: #111; }
+
+/* ===== Форма «название — значение» ===== */
+.form { position: absolute; left: 60px; right: 60px; top: 100px; display: grid; gap: 8px; }
+.frow { display: grid; grid-template-columns: 1fr 230px 90px; align-items: center; gap: 10px; }
+.frow__label {
+  height: 36px; line-height: 34px; padding: 0 12px;
+  background: linear-gradient(180deg, var(--row-hi), var(--row-bg)); border: 1px solid var(--row-line);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.frow__val {
+  height: 36px; line-height: 34px; padding: 0 12px; text-align: center;
+  background: var(--box-bg); color: var(--box-text); border: 1px solid #fff;
+}
+.frow__val--sel { background: var(--sel-bg); color: var(--sel-text); }
+.frow__val--ro { background: #c9cfdc; }
+.frow__unit { color: var(--scr-text); }
+.frow--section { padding: 4px 0 0; color: #cfe3ff; font-size: 15px; border-bottom: 1px solid #6d7ba3; }
+.frow--btn { display: flex; justify-content: center; }
+.frow__btn {
+  padding: 6px 30px; background: linear-gradient(180deg, #e9edf5, #b3bdd2); color: #111; border: 1px solid #fff;
+}
+.frow__btn.frow__val--sel { background: var(--sel-bg); }
+.form-note { position: absolute; left: 60px; top: 240px; color: var(--scr-text); }
+
+/* ===== Таблица ТО ===== */
+.mt-total { position: absolute; left: 60px; top: 70px; font-size: 22px; }
+.mt-upd {
+  position: absolute; right: 22px; top: 46px; width: 330px;
+  display: grid; grid-template-columns: 130px 1fr; border: 1px solid #6d7ba3;
+}
+.mt-upd span { padding: 2px 8px; background: rgba(90,104,132,.75); font-size: 14px; }
+.mt-upd b { padding: 2px 8px; background: #000; font-weight: 400; text-align: right; }
+.mt-table { position: absolute; left: 24px; right: 24px; top: 108px; }
+.mt-head, .mt-row {
+  display: grid; grid-template-columns: 44px 46px 120px 120px 1fr 110px 110px 80px; align-items: center;
+}
+.mt-head { background: rgba(90,104,132,.85); font-size: 14px; height: 22px; }
+.mt-head:first-child > span:nth-child(2) { grid-column: 2 / -1; padding-left: 120px; }
+.mt-row {
+  height: 44px; margin-top: 3px; position: relative;
+  background: linear-gradient(180deg, var(--row-hi), var(--row-bg)); border: 1px solid var(--row-line);
+}
+.mt-row--sel { background: linear-gradient(180deg, #f5ee7a, var(--sel-bg)); color: var(--sel-text); }
+.mt-no { grid-row: 1 / span 2; text-align: center; font-size: 18px; }
+.mt-name { position: absolute; left: 90px; top: 1px; font-size: 15px; white-space: nowrap; }
+.mt-count { grid-column: 2; align-self: end; padding-left: 6px; }
+.mt-interval, .mt-remain { text-align: right; padding-right: 10px; align-self: end; }
+.mt-interval { grid-column: 6; }
+.mt-remain { grid-column: 7; }
+.mt-alarm { grid-column: 8; text-align: center; align-self: end; margin: 0 2px 2px; }
+.mt-head .mt-interval, .mt-head .mt-remain, .mt-head .mt-alarm { align-self: center; }
+.mt-cell--sel { background: var(--sel-bg); color: var(--sel-text); }
+.mt-cell--edit { outline: 2px solid #fff; animation: blink 1s steps(2) infinite; }
+
+/* ===== Список неисправностей ===== */
+.fl { position: absolute; left: 20px; right: 20px; top: 76px; display: grid; gap: 3px; }
+.fl-row {
+  display: grid; grid-template-columns: 50px 120px 120px 1fr; align-items: center; height: 44px;
+  background: linear-gradient(180deg, var(--row-hi), var(--row-bg)); border: 1px solid var(--row-line); font-size: 15px;
+}
+.fl-row span:first-child { text-align: center; }
+.fl-head { height: 28px; background: rgba(90,104,132,.85); }
+.fl-row--sel { background: linear-gradient(180deg, #f5ee7a, var(--sel-bg)); color: var(--sel-text); }
+
+/* ===== Данные машины ===== */
+.md-sub { position: absolute; left: 40px; top: 46px; font-size: 18px; }
+.md-block { position: absolute; left: 40px; right: 30px; }
+.md-title { padding: 2px 10px; background: rgba(90,104,132,.85); margin-bottom: 4px; }
+.md-grid { display: grid; gap: 3px; }
+.md-grid--3 { grid-template-columns: 1.2fr 1fr 1.2fr; }
+.md-grid--2 { grid-template-columns: 1fr 1fr; }
+.md-grid--1 { grid-template-columns: 1fr; }
+.md-grid b { font-weight: 400; padding: 2px 8px; background: #33c6e8; color: #062033; }
+.md-grid span { padding: 3px 8px; min-height: 28px; background: var(--box-bg); color: var(--box-text); }
+
+/* ===== Настройка времени ===== */
+.ts { position: absolute; left: 70px; top: 110px; display: grid; gap: 10px; font-size: 20px; }
+.ts-label { margin-top: 14px; }
+.ts-val { padding-left: 40px; }
+.tbox { display: inline-block; padding: 2px 8px; background: var(--box-bg); color: var(--box-text); }
+.tbox--dim { background: #9aa3b8; }
+
+/* ===== Калибровка наклона ===== */
+.tl-label { position: absolute; left: 40px; font-size: 18px; }
+.tl-tabs { position: absolute; left: 480px; top: 130px; display: flex; gap: 10px; }
+.tl-tab { width: 110px; text-align: center; padding: 3px 0; background: rgba(90,104,132,.85); border: 1px solid #a5b0cc; }
+.tl-tab--sel { background: var(--sel-bg); color: var(--sel-text); }
+.tl-row { position: absolute; left: 40px; right: 30px; display: grid; grid-template-columns: 260px 110px 110px 110px 80px; gap: 10px; align-items: center; }
+.tl-name { padding: 4px 10px; background: rgba(90,104,132,.85); border: 1px solid #a5b0cc; }
+.tl-box { padding: 4px 8px; text-align: right; background: var(--box-bg); color: var(--box-text); min-height: 30px; }
+.tl-box--dark { background: #0b1238; border: 1px solid #a5b0cc; }
+
+/* ===== Монитор ввода-вывода ===== */
+.io { position: absolute; left: 30px; right: 30px; top: 74px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.io-head { background: #33c6e8; color: #062033; text-align: center; height: 22px; line-height: 22px; }
+.io-row { display: grid; grid-template-columns: 1fr 90px 40px; height: 22px; line-height: 22px; font-size: 14px; border-bottom: 1px solid #2c3a72; }
+.io-row b { font-weight: 400; text-align: right; background: var(--box-bg); color: var(--box-text); padding-right: 6px; }
+.io-row:empty, .io-row b:empty { background: transparent; }
+.io-row span:last-child { padding-left: 6px; }
+.io-on { background: var(--on-bg) !important; }
+
+/* ===== Транспортное средство ===== */
+.vlist { position: absolute; left: 120px; right: 120px; top: 130px; background: #000; border: 2px solid #fff; padding: 12px; z-index: 5; }
+.vlist__title { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 18px; }
+.vlist__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.vlist__grid span { padding: 4px 8px; background: #1b2a6b; border: 1px solid #6d7ba3; }
