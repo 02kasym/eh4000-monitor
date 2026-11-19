@@ -37,12 +37,10 @@ export const sector = (cx, cy, r0, r1, a0, a1, fill) => {
   return `<path d="M${ax} ${ay} A${r1} ${r1} 0 0 1 ${bx} ${by} L${c1} ${d1} A${r0} ${r0} 0 0 0 ${ex} ${ey}Z" fill="${fill}" stroke="#000" stroke-width="3"/>`;
 };
 
-/** Стрелка: оранжево-жёлтый клин. */
-export const needle = (cx, cy, len, deg, w = 6) => {
+/** Стрелка: оранжевая полоса с жёлтой серединой и коротким хвостом за центром. */
+export const needle = (cx, cy, len, deg, w = 6, tail = 0) => {
   const [tx, ty] = pt(cx, cy, len, deg);
-  const [lx, ly] = pt(cx, cy, w, deg - 90);
-  const [rx, ry] = pt(cx, cy, w, deg + 90);
-  return `<path d="M${lx} ${ly} L${tx} ${ty} L${rx} ${ry} Z" fill="url(#needleGrad)"/>
-    <defs><linearGradient id="needleGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffd23a"/><stop offset="1" stop-color="#ff5a1a"/></linearGradient></defs>`;
+  const [bx, by] = pt(cx, cy, tail, deg + 180);
+  return `<line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#ff4a10" stroke-width="${w}" stroke-linecap="round"/>
+    <line x1="${bx}" y1="${by}" x2="${tx}" y2="${ty}" stroke="#ffb22a" stroke-width="${Math.max(1, w * 0.35)}" stroke-linecap="round"/>`;
 };

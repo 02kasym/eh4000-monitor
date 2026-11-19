@@ -2,6 +2,7 @@
 import { esc, header, hints, wrap } from '../ui.js';
 import { dialogHtml } from './kit.js';
 import { FAULT_LIST, FAULTS_TOTAL } from './data-faults.js';
+import { getOffsetMin, setOffsetMin, formatOffset, TZ_STEP_MIN, TZ_MIN, TZ_MAX } from '../time.js';
 
 const WINDOW = 8;
 const scrollTop = (sel, top, n) => {
@@ -169,29 +170,45 @@ export const machineDataScreen = {
 };
 
 // ---------- Настройка времени ----------
-const TZ_OFFSET_H = 6;
 const dateBoxes = (d) =>
   `<span class="tbox">${d.getUTCFullYear()}</span>-<span class="tbox">${two(d.getUTCMonth() + 1)}</span>-<span class="tbox">${two(d.getUTCDate())}</span>
    &nbsp;<span class="tbox">${two(d.getUTCHours())}</span>:<span class="tbox">${two(d.getUTCMinutes())}</span>:<span class="tbox tbox--dim">${two(d.getUTCSeconds())}</span>`;
 
+// ○ «Настроить» — правка пояса: ↑↓ ±30 мин, ○ сохранить, ✕ отмена.
 export const timeScreen = {
-  init: () => ({ msg: '' }),
+  init: () => ({ edit: null, msg: '' }),
   render: (st) => {
     const now = new Date();
-    const local = new Date(now.getTime() + TZ_OFFSET_H * 3600e3);
+    const isEdit = st.edit !== null;
+    const offset = isEdit ? st.edit : getOffsetMin();
+    const local = new Date(now.getTime() + offset * 60e3);
+    const keys = isEdit
+      ? [['ud', 'Изменить'], ['x', 'Отмена'], ['o', 'устан.']]
+      : [['x', 'Назад'], ['o', 'Настроить']];
     return `
       ${header('Настройка времени')}
       <div class="ts">
         <div class="ts-label">Время по Гринвичу</div><div class="ts-val">${dateBoxes(now)}</div>
         <div class="ts-label">Местное поясное время</div><div class="ts-val">${dateBoxes(local)}</div>
-        <div class="ts-label">Разница во времени</div><div class="ts-val"><span class="tbox">+ ${two(TZ_OFFSET_H)}:00</span></div>
+        <div class="ts-label">Разница во времени</div>
+        <div class="ts-val"><span class="tbox${isEdit ? ' tbox--edit' : ''}">${formatOffset(offset)}</span></div>
       </div>
       ${st.msg ? `<div class="toast">${esc(st.msg)}</div>` : ''}
-      ${hints([['x', 'Назад'], ['o', 'Настроить']])}`;
+      ${hints(keys)}`;
   },
   on: (key, st) => {
+    if (st.edit !== null) {
+      if (key === 'up') return { st: { ...st, edit: Math.min(TZ_MAX, st.edit + TZ_STEP_MIN) } };
+      if (key === 'down') return { st: { ...st, edit: Math.max(TZ_MIN, st.edit - TZ_STEP_MIN) } };
+      if (key === 'x') return { st: { ...st, edit: null, msg: '' } };
+      if (key === 'o') {
+        setOffsetMin(st.edit);
+        return { st: { ...st, edit: null, msg: `Часовой пояс: GMT ${formatOffset(st.edit)}` } };
+      }
+      return {};
+    }
     if (key === 'x') return { pop: true };
-    if (key === 'o') return { st: { ...st, msg: 'Время синхронизировано по GPS' } };
+    if (key === 'o') return { st: { ...st, edit: getOffsetMin(), msg: '' } };
     return {};
   },
 };

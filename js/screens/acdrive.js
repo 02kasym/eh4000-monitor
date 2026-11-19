@@ -1,60 +1,71 @@
-// Схема «Привод перем.тока» (меню сервиса → первый пункт).
-import { esc, header, hints } from '../ui.js';
+// Схема «Привод перем.тока» (меню сервиса → первый пункт). Координаты сняты с фото экрана.
+import { esc, clock, hints } from '../ui.js';
 
-const tag = (x, y, t) => `<div class="ac-tag" style="left:${x}px;top:${y}px">${esc(t)}</div>`;
-const lbl = (x, y, t, warm = false) => `<div class="ac-lbl${warm ? ' ac-lbl--warm' : ''}" style="left:${x}px;top:${y}px">${esc(t)}</div>`;
-const v = (x, y, val, unit, warm = false) =>
-  `<div class="ac-val${warm ? ' ac-val--warm' : ''}" style="left:${x}px;top:${y}px">${esc(val)}</div>` +
-  (unit ? `<div class="ac-unit" style="left:${x + 72}px;top:${y + 4}px">${esc(unit)}</div>` : '');
+const tag = (x, y, w, t) => `<div class="ac-tag" style="left:${x}px;top:${y}px;width:${w}px">${esc(t)}</div>`;
+const lbl = (x, y, t, cls = '') => `<div class="ac-lbl ${cls}" style="left:${x}px;top:${y}px">${esc(t)}</div>`;
 
-const motor = (y, side, d) => `
-  <div class="ac-motor" style="left:560px;top:${y - 26}px">Мотор<br>${side}</div>
-  ${lbl(642, y - 22, 'Скор.')}${v(692, y - 24, d.spd, 'km/h')}
-  ${lbl(642, y + 2, 'Темп.')}${v(692, y, d.t, 'c')}
-  ${lbl(600, y + 30, 'Т.внт.пдш.', true)}${v(692, y + 28, d.tin, 'c')}
-  ${lbl(600, y + 54, 'Т.внш.пдш.', true)}${v(692, y + 52, d.tout, 'c')}`;
+/** Белое поле значения + единица справа. */
+const box = (x, y, w, val, unit = '', unitCls = '') =>
+  `<div class="ac-val" style="left:${x}px;top:${y}px;width:${w}px">${esc(val)}</div>` +
+  (unit ? `<div class="ac-unit ${unitCls}" style="left:${x + w + 3}px;top:${y + 1}px">${esc(unit)}</div>` : '');
 
+const motor = (cx, cy, side) =>
+  `<div class="ac-motor" style="left:${cx - 36}px;top:${cy - 36}px">Мотор<br>${side}</div>`;
+
+/** Инвертор/преобразователь: плашка, Ток, Темп. */
 const branch = (y, name, amps, temp) => `
-  ${tag(400, y, name)}
-  ${lbl(402, y + 32, 'Ток')}${v(470, y + 30, amps, 'A')}
-  ${lbl(402, y + 58, 'Темп.')}${v(470, y + 56, temp, 'c')}`;
+  ${tag(392, y, 81, name)}
+  ${lbl(393, y + 31, 'Ток')}${box(463, y + 30, 68, amps, 'A')}
+  ${lbl(393, y + 59, 'Темп.')}${box(463, y + 58, 68, temp, 'C')}`;
+
+/** Данные мотора: скорость, температура и две температуры подшипников. */
+const motorData = (y, d) => `
+  ${lbl(633, y - 23, 'Скор.')}${box(691, y - 24, 69, d.spd, 'km/h')}
+  ${lbl(633, y + 5, 'Темп.')}${box(691, y + 4, 69, d.t, 'C')}
+  ${lbl(555, y + 45, 'Т.вент.пдш.', 'ac-lbl--red')}${box(690, y + 44, 69, d.b1, 'C')}
+  ${lbl(555, y + 73, 'Т.вент.пдш.', 'ac-lbl--red')}${box(690, y + 72, 69, d.b2, 'C')}`;
+
+const ZIGZAG = (x, y) => `M${x} ${y} l7 -8 l7 16 l7 -16 l7 16 l7 -16 l7 8`;
 
 const LINES = `
   <svg class="ac-svg" viewBox="0 0 800 600" aria-hidden="true">
-    <g stroke="#1b1f10" stroke-width="2" fill="none">
-      <path d="M380 68 V392 M380 68 H400 M380 188 H400 M380 300 H400 M380 392 H400"/>
-      <path d="M340 296 H380"/>
-      <path d="M52 270 V296 M110 296 H140 M226 296 H250"/>
-      <path d="M520 68 H560 M520 188 H560"/>
-      <path d="M200 270 q6 -10 12 0 q6 -10 12 0 q6 -10 12 0"/>
-      <path d="M520 300 l8 -8 l8 16 l8 -16 l8 16 l8 -8 M520 392 l8 -8 l8 16 l8 -16 l8 16 l8 -8"/>
+    <g stroke="#000" stroke-width="2.4" fill="none">
+      <path d="M22 256 V307"/>
+      <path d="M116 318 H132 M228 318 H243 M342 318 H359 V269 H377"/>
+      <path d="M377 83 V428 M377 83 H392 M377 220 H392 M377 336 H392 M377 428 H392"/>
+      <path d="M473 83 H553 M473 220 H550"/>
+      <path d="M180 256 V289 q4 6 8 0 q4 6 8 0 q4 6 8 0"/>
+      <path d="${ZIGZAG(475, 336)} ${ZIGZAG(475, 428)}"/>
     </g>
   </svg>`;
 
 export const renderAcDrive = () => `
+  <div class="ac-top"><span>Привод перем.тока</span><span>${clock()}</span></div>
   ${LINES}
-  ${header('Привод перем.тока')}
-  ${tag(40, 210, 'Двиг.')}${v(60, 238, '0', '/min')}
-  ${tag(40, 284, 'Всп.ген')}${tag(140, 284, 'Глав.ген.')}${tag(250, 284, 'Выпрямит.')}
-  ${tag(176, 214, 'MFR')}${lbl(240, 206, 'Ток')}${v(240, 230, '0.0', 'A')}
-  ${lbl(150, 316, 'Темп.')}${v(150, 338, '-2', 'c', true)}
-  ${lbl(150, 366, 'Т. пдш', true)}${v(150, 388, '-12', 'c', true)}
-  ${lbl(270, 316, 'DC')}${v(270, 338, '16.6', 'V')}
-  ${lbl(270, 366, 'Ток')}${v(270, 388, '1.2', 'A')}
-  ${lbl(270, 414, 'Темп.')}${v(270, 436, '-11', 'c')}
-  ${branch(56, 'Инв. П', '1.8', '-13')}
-  ${branch(176, 'Инв. Л', '1.5', '-13')}
-  ${branch(288, 'ПРЕОБ П', '0.0', '-13')}
-  ${branch(380, 'ПРЕОБ Л', '3.6', '-13')}
-  ${motor(80, 'П', { spd: '0.0', t: '-7', tin: '-14', tout: '-15' })}
-  ${motor(200, 'Л', { spd: '0.0', t: '-6', tin: '-14', tout: '-15' })}
-  <div class="ac-panel" style="left:560px;top:300px;width:228px;height:84px"></div>
-  ${lbl(568, 306, 'Атмосф. темп.')}${v(700, 304, '-12', 'c')}
-  ${lbl(568, 332, 'Темп. шкафа')}${v(700, 330, '-7', 'c')}
-  ${lbl(568, 358, 'Темп.охл.жидк.')}${v(700, 356, '-14', 'c')}
-  <div class="ac-panel" style="left:560px;top:392px;width:228px;height:32px"></div>
-  ${lbl(568, 398, '24VDC(P24A)')}${v(700, 396, '24.0', 'V')}
-  ${lbl(568, 434, 'Скр.кол.ПП')}${v(680, 432, '0.0', 'km/h')}
-  ${lbl(568, 460, 'Скр.кол.ПЛ')}${v(680, 458, '0.0', 'km/h')}
+  ${tag(14, 232, 58, 'Двиг.')}${box(36, 271, 62, '0', '/min')}
+  ${tag(151, 232, 49, 'MFR')}${lbl(212, 229, 'Ток')}${box(212, 255, 68, '0.0', 'A')}
+  ${tag(16, 307, 100, 'Всп.ген')}${tag(132, 307, 96, 'Глав.ген.')}${tag(243, 307, 99, 'Выпрямит.')}
+  ${lbl(153, 336, 'Темп.')}${box(153, 360, 59, '-2', 'C')}
+  ${lbl(153, 394, 'Т. пдш')}${box(153, 418, 59, '-12', 'C')}
+  ${lbl(263, 336, 'DC')}${box(263, 360, 68, '15.6', 'V')}
+  ${lbl(263, 394, 'Ток')}${box(263, 418, 68, '2.0', 'A')}
+  ${lbl(263, 447, 'Темп.')}${box(263, 471, 68, '-11', 'C')}
+  ${branch(71, 'Инв. П', '2.6', '-13')}
+  ${branch(208, 'Инв. Л', '0.6', '-13')}
+  ${branch(324, 'ПРЕОБ П', '2.6', '-13')}
+  ${branch(417, 'ПРЕОБ Л', '4.5', '-13')}
+  ${motor(589, 83, 'П')}${motorData(83, { spd: '0.0', t: '-7', b1: '-14', b2: '-15' })}
+  ${motor(586, 220, 'Л')}${motorData(220, { spd: '0.0', t: '-6', b1: '-14', b2: '-15' })}
+  <div class="ac-panel">
+    <div class="ac-panel__sec" style="height:86px"></div>
+    <div class="ac-panel__sec" style="height:35px"></div>
+    <div class="ac-panel__sec" style="height:60px;border:0"></div>
+  </div>
+  ${lbl(555, 330, 'Атмосф. темп.', 'ac-lbl--panel')}${box(710, 330, 62, '-12', 'C', 'ac-unit--panel')}
+  ${lbl(555, 356, 'Темп. шкафа', 'ac-lbl--panel')}${box(710, 356, 62, '-7', 'C', 'ac-unit--panel')}
+  ${lbl(555, 381, 'Темп.охл.жидк.', 'ac-lbl--panel')}${box(710, 381, 62, '-14', 'C', 'ac-unit--panel')}
+  ${lbl(555, 417, '24VDC(P24A)', 'ac-lbl--panel')}${box(700, 417, 72, '24.0', 'V', 'ac-unit--panel')}
+  ${lbl(555, 453, 'Скр.кол.ПП', 'ac-lbl--panel')}${box(677, 453, 69, '0.0', 'km/h', 'ac-unit--panel')}
+  ${lbl(555, 478, 'Скр.кол.ПЛ', 'ac-lbl--panel')}${box(677, 478, 69, '0.0', 'km/h', 'ac-unit--panel')}
   <div class="ac-foot"><div></div><div></div><div></div></div>
-  ${hints([['x', 'Назад']]).replace('class="s-hints"', 'class="s-hints" style="justify-content:flex-end;padding-right:120px"')}`;
+  <div class="ac-bottom">${hints([['x', 'Назад']]).replace('class="s-hints"', 'class="s-hints ac-hints"')}</div>`;

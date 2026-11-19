@@ -149,31 +149,45 @@
 .boot-item__res--pending { background: var(--warn); color: #6b4a00; }
 .boot-msg { position: absolute; left: 120px; top: 360px; color: var(--scr-text); line-height: 1.35; }
 
-/* ===== Привод перем. тока (схема) ===== */
-.ac { background: linear-gradient(180deg, #4c5a2a, #39451c); }
-.ac .s-title, .ac .s-clock { color: #f2f2d8; }
+/* ===== Привод перем. тока (схема по фото) ===== */
+.ac { background: #e6e93c; color: #000; font-weight: 700; }
+.ac-top {
+  position: absolute; left: 0; right: 0; top: 0; height: 33px; padding: 0 12px 0 22px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: #0d1a3e; color: #fff; font-size: 18px; font-weight: 400;
+}
 .ac-svg { position: absolute; inset: 0; }
 .ac-tag {
-  position: absolute; padding: 0 8px; height: 24px; line-height: 22px;
-  background: #24306b; border: 1px solid #c9d0e6; color: #fff; font-size: 15px;
+  position: absolute; height: 24px; line-height: 24px; padding: 0 5px; white-space: nowrap;
+  background: #172a86; color: #fff; font-size: 17px; text-align: center;
+  box-shadow: inset 0 0 0 1px #3a52b8;
 }
-.ac-lbl { position: absolute; font-size: 15px; color: #f0f0e0; }
-.ac-lbl--warm { color: #ff9a7a; }
+.ac-lbl { position: absolute; font-size: 18px; line-height: 25px; color: #111; white-space: nowrap; }
+.ac-lbl--red { color: #d0201b; }
+.ac-lbl--panel { color: #e9ecf6; font-weight: 400; }
 .ac-val {
-  position: absolute; height: 24px; line-height: 22px; padding: 0 6px; min-width: 64px; text-align: right;
-  background: #d9dbf2; color: #141a33; border: 1px solid #fff; font-size: 16px;
+  position: absolute; height: 25px; line-height: 23px; padding: 0 5px; text-align: right;
+  background: #f4f5f8; color: #111; border: 1px solid #6c6c6c; font-size: 20px; font-weight: 400;
 }
-.ac-val--warm { background: #f3c9c9; }
-.ac-unit { position: absolute; font-size: 14px; color: #f0f0e0; }
+.ac-unit { position: absolute; font-size: 15px; line-height: 23px; color: #111; }
+.ac-unit--panel { color: #e9ecf6; }
 .ac-motor {
-  position: absolute; width: 74px; height: 74px; border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #ff5a4a, #b4130b);
-  display: grid; place-items: center; text-align: center; font-size: 14px; line-height: 1.2;
-  box-shadow: 0 0 0 2px #e9d0c0;
+  position: absolute; width: 72px; height: 72px; border-radius: 50%;
+  background: #e31313; color: #fff; display: grid; place-items: center; text-align: center;
+  font-size: 16px; line-height: 1.15; box-shadow: 0 0 0 2px #f07070 inset;
 }
-.ac-panel { position: absolute; background: rgba(80, 92, 150, .55); border: 1px solid #b9c1e0; }
-.ac-foot { position: absolute; left: 50px; right: 30px; top: 498px; height: 36px; display: grid; grid-template-columns: 100px 100px 1fr; gap: 2px; }
-.ac-foot div { background: rgba(140, 150, 190, .5); border: 1px solid #c5cbe2; }
+.ac-panel {
+  position: absolute; left: 544px; right: 2px; top: 324px; height: 181px;
+  background: #5a6894; display: flex; flex-direction: column;
+}
+.ac-panel__sec { border-bottom: 3px solid #e6e93c; }
+.ac-foot {
+  position: absolute; left: 15px; right: 2px; top: 511px; height: 42px;
+  display: grid; grid-template-columns: 109px 106px 1fr; border: 1px solid #555;
+}
+.ac-foot div { background: #dfe4f2; border-right: 1px solid #555; }
+.ac-bottom { position: absolute; left: 0; right: 0; top: 561px; bottom: 0; background: #0d1a3e; }
+.ac-hints { position: static; justify-content: flex-start; padding-left: 612px; height: 100%; align-items: center; color: #fff; font-weight: 400; }
 
 /* ===== Воспроизведение ===== */
 .rec-row {

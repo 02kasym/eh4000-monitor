@@ -1,5 +1,5 @@
 /* ===== Главный экран (новый дизайн) ===== */
-.screen[data-screen="main"] { background: #1b2aa0; }
+.screen[data-screen="main"] { background: #1d2ea6; }
 .screen[data-screen="main"] .dash-model,
 .screen[data-screen="main"] .dash-hours { font: 700 22px var(--font-screen); top: 10px; z-index: 1; }
 .screen[data-screen="main"] .dash-fault {
@@ -143,3 +143,4 @@
 .vlist__title { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 18px; }
 .vlist__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .vlist__grid span { padding: 4px 8px; background: #1b2a6b; border: 1px solid #6d7ba3; }
+.tbox--edit { background: var(--sel-bg); color: var(--sel-text); animation: blink 1s steps(2) infinite; }

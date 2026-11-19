@@ -1,18 +1,22 @@
 // Общие помощники для отрисовки экранов.
+import { localNow } from './time.js';
 
 const ESC_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
 /** Экранирует текст для вставки в HTML. */
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC_MAP[c]);
 
-/** Часы в формате ЧЧ:ММ. */
-export const clock = (d = new Date()) =>
-  `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+/** Часы в формате ЧЧ:ММ по часовому поясу монитора. */
+export const clock = () => {
+  const d = localNow();
+  return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`;
+};
 
-/** Дата-время записи: 2021-11-25 08:52:19 */
-export const stamp = (d = new Date()) => {
+/** Дата-время записи по поясу монитора: 2021-11-25 08:52:19 */
+export const stamp = (at = new Date()) => {
+  const d = localNow(at.getTime());
   const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`;
 };
 
 const ICONS = {
