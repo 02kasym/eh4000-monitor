@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Монитор EH4000AC-3</title>
+  <meta name="description" content="Цифровой тренажёр бортового монитора самосвала: экраны, меню сервиса и кнопочная панель.">
+  <meta name="theme-color" content="#3b3d40">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Mono&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=2">
+  <link rel="stylesheet" href="css/screens.css?v=2">
+</head>
+<body>
+  <main class="stage">
+    <section class="device" aria-label="Бортовой монитор">
+      <div class="bezel">
+        <div class="screen-wrap">
+          <div id="screen" class="screen" role="application" aria-live="polite" aria-label="Экран монитора"></div>
+        </div>
+      </div>
+
+      <nav class="keypad" aria-label="Кнопки управления">
+        <button class="key key--help" data-key="help" aria-label="Вопрос (?)" title="? — клавиша H">?</button>
+
+        <div class="dpad">
+          <div class="dpad__ring" aria-hidden="true"></div>
+          <button class="key key--up" data-key="up" aria-label="Вверх" title="↑">
+            <svg viewBox="0 0 24 24"><path d="M12 4l7 8h-4.5v8h-5v-8H5z"/></svg>
+          </button>
+          <button class="key key--left" data-key="left" aria-label="Влево" title="←">
+            <svg viewBox="0 0 24 24"><path d="M4 12l8-7v4.5h8v5h-8V19z"/></svg>
+          </button>
+          <button class="key key--right" data-key="right" aria-label="Вправо" title="→">
+            <svg viewBox="0 0 24 24"><path d="M20 12l-8 7v-4.5H4v-5h8V5z"/></svg>
+          </button>
+          <button class="key key--down" data-key="down" aria-label="Вниз" title="↓">
+            <svg viewBox="0 0 24 24"><path d="M12 20l-7-8h4.5V4h5v8H19z"/></svg>
+          </button>
+        </div>
+
+        <button class="key key--star" data-key="star" aria-label="Звёздочка (*) — яркость" title="* — клавиша B">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg>
+        </button>
+        <button class="key key--x" data-key="x" aria-label="Крестик — назад / отмена" title="✕ — Esc">
+          <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+        </button>
+        <button class="key key--o" data-key="o" aria-label="Кружок — установить / ввод" title="○ — Enter">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" stroke-width="2.8" fill="none"/></svg>
+        </button>
+      </nav>
+
+      <p class="kbd-hint">Клавиатура: стрелки · Enter = ○ · Esc = ✕ · H = ? · B = ✱</p>
+    </section>
+  </main>
+  <script type="module" src="js/app.js?v=2"></script>
+</body>
+</html>
