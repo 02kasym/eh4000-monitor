@@ -69,25 +69,34 @@ const tacho = () => {
 };
 
 // ---------- малые приборы ----------
+// Углы по компасу (0° — вверх). Дуга и красные зоны сняты с фото каждого прибора.
+// «L–H» (давление масла, гидравлика): дуга по верху, стрелка лежит у L слева.
+// «C–H» (температуры): дуга от C снизу слева через верх, красная зона вверху справа.
+const LH = { arc: [292, 432], scale: [300, 425], lo: [-0.62, 0.1], hi: [0.66, 0.14], icon: [-21, 0.26] };
+const CH = { arc: [228, 400], scale: [262, 410], lo: [-0.5, 0.6], hi: [0.62, -0.18], icon: [-4, 0.08] };
+
 const SMALL = [
-  { cx: 346, lo: 'L', icon: ICON.oil, at: 0.06, red: [[0, 0.1]] },
-  { cx: 474, lo: 'C', icon: ICON.coolant, at: 0.16, red: [[0.62, 0.78]] },
-  { cx: 601, lo: 'C', icon: ICON.trans, at: 0.16, red: [[0.62, 0.78]] },
-  { cx: 729, lo: 'L', icon: ICON.hyd, at: 0.08, red: [[0, 0.08], [0.9, 1]] },
+  { cx: 346, kind: LH, lo: 'L', icon: ICON.oil, needle: 282, red: [[292, 308]] },
+  { cx: 474, kind: CH, lo: 'C', icon: ICON.coolant, needle: 238, red: [[372, 400]] },
+  { cx: 601, kind: CH, lo: 'C', icon: ICON.trans, needle: 238, red: [[372, 400]] },
+  { cx: 729, kind: LH, lo: 'L', icon: ICON.hyd, needle: 284, red: [[292, 306], [418, 432]] },
 ];
 
-const smallGauges = () => SMALL.map(({ cx, lo, icon, at, red }) => {
-  const cy = 447, r = 57, a0 = 248, sweep = 222;
-  const ang = (f) => a0 + f * sweep;
+const ICON_SCALE = 0.95;
+
+const smallGauges = () => SMALL.map(({ cx, kind, lo, icon, needle: at, red }) => {
+  const cy = 447, r = 57;
+  const [s0, s1] = kind.scale;
+  const tickAng = (v) => s0 + (v / 10) * (s1 - s0);
   return `${ring(cx, cy, r, 6)}
-    <path d="${arc(cx, cy, r * 0.8, ang(0), ang(1))}" stroke="${BLUE}" stroke-width="8" fill="none"/>
-    ${red.map(([f0, f1]) => `<path d="${arc(cx, cy, r * 0.8, ang(f0), ang(f1))}" stroke="${RED}" stroke-width="8" fill="none"/>`).join('')}
-    <path d="${arc(cx, cy, r * 0.56, ang(0.1), ang(0.9))}" stroke="#e8e8e8" stroke-width="1.5" fill="none"/>
-    ${ticks({ cx, cy, rOut: r * 0.56, max: 8, step: 1, major: 4, ang: (v) => ang(0.1 + v / 10), len: [4, 6] })}
-    <text x="${cx - r * 0.55}" y="${cy + 12}" class="dsmall">${lo}</text>
-    <text x="${cx + r * 0.6}" y="${cy + 10}" class="dsmall">H</text>
-    <g transform="translate(${cx - 15} ${cy + 18})">${icon}</g>
-    ${needle(cx, cy, r * 0.64, ang(at), 3, 4)}`;
+    <path d="${arc(cx, cy, r * 0.8, kind.arc[0], kind.arc[1])}" stroke="${BLUE}" stroke-width="9" fill="none"/>
+    ${red.map(([a0, a1]) => `<path d="${arc(cx, cy, r * 0.8, a0, a1)}" stroke="${RED}" stroke-width="9" fill="none"/>`).join('')}
+    <path d="${arc(cx, cy, r * 0.52, s0, s1)}" stroke="#d8d8d8" stroke-width="1.5" fill="none"/>
+    ${ticks({ cx, cy, rOut: r * 0.52, max: 10, step: 1, major: 5, ang: tickAng, len: [4, 4] })}
+    <text x="${cx + r * kind.lo[0]}" y="${cy + r * kind.lo[1] + 7}" class="dsmall">${lo}</text>
+    <text x="${cx + r * kind.hi[0]}" y="${cy + r * kind.hi[1] + 7}" class="dsmall">H</text>
+    <g transform="translate(${cx + kind.icon[0]} ${cy + r * kind.icon[1]}) scale(${ICON_SCALE})">${icon}</g>
+    ${needle(cx, cy, r * 0.74, at, 5, 3)}`;
 }).join('');
 
 // ---------- груз и топливо ----------
